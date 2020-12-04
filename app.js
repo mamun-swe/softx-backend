@@ -12,13 +12,17 @@ app.use(bodyParser.json())
 app.use(cors())
 app.use(fileUpload())
 
-app.use('/uploads/images', express.static('uploads/images/'))
+app.use('/uploads/books', express.static('uploads/books/'))
 
 // Main Routes
-const userRoute = require("./api/routes/user")
+const AuthRoute = require("./api/routes/Auth")
+const LibrarianRoute = require("./api/routes/Librarian")
+const StudentRoute = require("./api/routes/Student")
 
 // API URL's
-app.use("/api/user", userRoute)
+app.use("/api/auth", AuthRoute)
+app.use("/api/librarian", LibrarianRoute)
+app.use("/api/student", StudentRoute)
 
 app.use((req, res, next) => {
     let error = new Error('404 page Not Found')
@@ -48,7 +52,7 @@ app.get('/', (req, res) => {
 })
 
 // DB Connection here
-const URL = "mongodb://localhost:27017/idoctor"
+const URL = "mongodb://localhost:27017/softx"
 mongoose.connect(URL, {
     useNewUrlParser: true,
     useUnifiedTopology: true,

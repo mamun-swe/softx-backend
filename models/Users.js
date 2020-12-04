@@ -20,32 +20,19 @@ const userSchema = new Schema({
         lowercase: true,
         validate: [validateEmail, 'Please provide a valid email address']
     },
-    phone: {
-        type: String,
-        required: true,
-        trim: true,
-        unique: true,
-        validate: {
-            validator: function (v) {
-                // Bangladeshi phone number
-                return /^(?:\+?88)?01[15-9]\d{8}$/.test(v);
-            },
-            message: props => `${props.value} is not a valid phone number!`
-        },
-    },
     role: {
         type: String,
-        default: "user",
-        enum: ["admin", "user"]
+        default: "student",
+        enum: ["librarian", "student"]
+    },
+    password: {
+        type: String,
+        required: true
     },
     status: {
         type: String,
         default: "offline",
         enum: ["online", "offline"]
-    },
-    image: {
-        type: String,
-        default: null
     },
     access_token: {
         type: String,
