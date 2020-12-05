@@ -31,18 +31,6 @@ const fileUpload = file => {
     return filename
 }
 
-// Remove File from Directory
-const removeFile = async (file) => {
-    const path = url + "uploads/books/" + file
-    try {
-        fs.unlinkSync(path)
-    } catch (error) {
-        if (error) {
-            console.log(error)
-        }
-    }
-}
-
 // Get All Books from Store 
 const Index = async (req, res, next) => {
     try {
@@ -189,9 +177,6 @@ const Update = async (req, res, next) => {
         if (req.files) {
             filename = fileUpload(req.files.bookImage)
         }
-
-        // Remove File from directory
-        await removeFile(book.bookImage)
 
         // Book Object 
         const updateData = {
