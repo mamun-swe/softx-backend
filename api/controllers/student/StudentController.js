@@ -38,10 +38,17 @@ const SentRequest = async (req, res, next) => {
             book: bookId
         })
 
+        // Check Already request sent ro not
+        const findBook = await Books.findOne({ _id: bookId }).exec()
+        const checkAvailable = await findBook.students.find(id => id == studentId)
+        if (checkAvailable) {
+            return res.status(209).json({ message: 'Already request sent' })
+        }
+
         // push permitted student into book 
         await Books.findOneAndUpdate(
             { _id: bookId },
-            { $push: { students: newRequest._id } },
+            { $push: { students: studentId } },
             { new: true }
         ).exec()
 
