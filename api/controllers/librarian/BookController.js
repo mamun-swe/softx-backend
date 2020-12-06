@@ -1,7 +1,6 @@
 const Books = require('../../../models/Books')
 const url = require('../../../utils/url')
 const checkId = require('../../middleware/CheckId')
-const fs = require('fs')
 
 // Formate Date
 const formateDate = (date) => {
@@ -41,7 +40,7 @@ const Index = async (req, res, next) => {
 
         // Check books available or not 
         if (books.length <= 0) {
-            return res.status(204).json({
+            return res.status(404).json({
                 status: false,
                 message: 'No books found'
             })
