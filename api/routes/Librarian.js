@@ -12,5 +12,6 @@ router.delete('/book/:id/delete', BookController.Destroy)
 
 // Request Router
 router.get('/request/index', RequestController.Index)
+router.post('/request/status/update', RequestController.Update)
 
 module.exports = router

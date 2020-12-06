@@ -1,4 +1,5 @@
 const Requests = require('../../../models/Requests')
+const checkId = require('../../middleware/CheckId')
 const url = require('../../../utils/url')
 
 // Requests Index
@@ -40,6 +41,40 @@ const Index = async (req, res, next) => {
 }
 
 
+// Update Request
+const Update = async (req, res, next) => {
+    try {
+        const { id, status } = req.body
+        await checkId(id)
+
+        const updateStatus = await Requests.findOneAndUpdate(
+            { _id: id },
+            { $push: { status: status } },
+            { new: true }
+        ).exec()
+
+        if (!updateStatus) {
+            return res.status(501).json({
+                status: false,
+                message: 'Update failed'
+            })
+        }
+
+        res.status(200).json({
+            status: true,
+            message: 'Successfully request approved'
+        })
+
+    } catch (error) {
+        if (error) {
+            console.log(error)
+            next(error)
+        }
+    }
+}
+
+
 module.exports = {
-    Index
+    Index,
+    Update
 }
