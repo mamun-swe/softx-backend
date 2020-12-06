@@ -153,9 +153,36 @@ const Logout = async (req, res, next) => {
     }
 }
 
+// Me
+const Me = async (req, res, next) => {
+    try {
+        // Split token
+        const token = req.headers.authorization.split(' ')[1]
+        const decode = jwt.verify(token, 'SECRET')
+        const id = decode.id
+
+        const result = await Users.findOne({ _id: id }, { name: 1, role: 1 }).exec()
+        if (!result) {
+            return res.status(404).json({
+                status: false,
+                message: 'Invalid token'
+            })
+        }
+
+        res.status(200).json({
+            status: true,
+            result: result
+        })
+
+    } catch (error) {
+        next(error)
+        console.log(error)
+    }
+}
 
 module.exports = {
     Register,
     Login,
-    Logout
+    Logout,
+    Me
 }

@@ -1,7 +1,11 @@
 const express = require('express')
 const router = express.Router()
+const DashboardController = require('../controllers/librarian/DashboardController')
 const BookController = require('../controllers/librarian/BookController')
 const RequestController = require('../controllers/librarian/RequestController')
+
+// Dashboard router 
+router.get('/dashboard', DashboardController.Index)
 
 // Book router
 router.get('/book/index', BookController.Index)

@@ -47,10 +47,9 @@ const Update = async (req, res, next) => {
         const { id, status } = req.body
         await checkId(id)
 
-        const updateStatus = await Requests.findOneAndUpdate(
+        const updateStatus = await Requests.update(
             { _id: id },
-            { $push: { status: status } },
-            { new: true }
+            { "$set": { "status": status } }
         ).exec()
 
         if (!updateStatus) {
