@@ -15,6 +15,65 @@ const formateDate = (date) => {
     return formattedDate = format.m + '.' + format.d + '.' + format.y
 }
 
+// All books 
+const AllBooks = async (req, res, next) => {
+    try {
+        // Find All Books
+        const books = await Books.find({ status: 'activate' }, { bookName: 1, bookImage: 1 })
+            .sort({ _id: 1 })
+            .exec()
+
+        // Check books available or not 
+        if (books.length <= 0) {
+            return res.status(404).json({
+                status: false,
+                message: 'No books found'
+            })
+        }
+
+        // Modifiy image path url with public url 
+        const response = {
+            results: books.map(book => {
+                return {
+                    id: book._id,
+                    bookName: book.bookName,
+                    bookImage: url + "uploads/books/" + book.bookImage
+                };
+            })
+        }
+        res.status(200).json(response);
+    } catch (error) {
+        if (error) {
+            next(error)
+        }
+    }
+}
+
+// Search Book
+const SearchBook = async (req, res, next) => {
+    try {
+        // Query Params
+        const { query } = req.params
+
+        // Search from database
+        const result = await Books.find(
+            {
+                $and: [
+                    { "bookName": { $regex: ".*" + query + ".*" } },
+                    { status: 'activate' }
+                ]
+            }
+        ).exec()
+
+        res.status(200).json(result)
+
+    } catch (error) {
+        if (error) {
+            next(error)
+        }
+    }
+}
+
 // Submit request to book view 
 const SentRequest = async (req, res, next) => {
     try {
@@ -74,7 +133,7 @@ const SentRequest = async (req, res, next) => {
 }
 
 // My Pending requests
-const pendingRequests = async (req, res, next) => {
+const PendingRequests = async (req, res, next) => {
     try {
         // Split token
         const token = req.headers.authorization.split(' ')[1]
@@ -90,7 +149,7 @@ const pendingRequests = async (req, res, next) => {
             })
             .exec()
         if (!requests.length) {
-            return res.status(204).json({ status: false, message: "No results found" })
+            return res.status(404).json({ status: false, message: "No results found" })
         }
 
         // Modifiy image path url with public url 
@@ -113,7 +172,54 @@ const pendingRequests = async (req, res, next) => {
 
     } catch (error) {
         if (error) {
-            console.log(error)
+            next(error)
+        }
+    }
+}
+
+// My Approved requests
+const ApprovedRequests = async (req, res, next) => {
+    try {
+        // Split token
+        const token = req.headers.authorization.split(' ')[1]
+        const decode = jwt.verify(token, 'SECRET')
+        const studentId = decode.id
+
+        // Find all approved requests using my id
+        const data = await Request.find({ $and: [{ studentId: studentId }, { status: true }] })
+            .populate({
+                path: 'book',
+                match: { status: 'activate' },
+                select: 'bookName author genre releaseDate bookImage',
+            })
+            .exec()
+
+        if (!data.length) {
+            return res.status(404).json({ status: false, message: "No results found" })
+        }
+
+
+        // Modifiy image path url with public url 
+        const response = {
+            results: data.map(item => {
+                return {
+                    book: {
+                        id: item.book.id,
+                        bookName: item.book.bookName,
+                        author: item.book.author,
+                        genre: item.book.genre,
+                        releaseDate: formateDate(item.book.releaseDate),
+                        bookImage: url + "uploads/books/" + item.book.bookImage,
+                    },
+                    status: item.status,
+                };
+            })
+        }
+
+        res.status(200).json({ status: true, requests: response.results })
+
+    } catch (error) {
+        if (error) {
             next(error)
         }
     }
@@ -149,7 +255,7 @@ const ViewBook = async (req, res, next) => {
         }
 
         // Find the book
-        const book = await Request.findOne({ studentId: studentId })
+        const result = await Request.findOne({ studentId: studentId })
             .populate({
                 path: 'book',
                 match: { status: 'activate' },
@@ -157,9 +263,19 @@ const ViewBook = async (req, res, next) => {
             })
             .exec()
 
+        const response = {
+            _id: result.id,
+            bookName: result.book.bookName,
+            author: result.book.author,
+            genre: result.book.genre,
+            releaseDate: formateDate(result.book.releaseDate),
+            bookImage: url + "uploads/books/" + result.book.bookImage,
+            status: result.status
+        }
+
         res.status(200).json({
             status: true,
-            book
+            response
         })
 
     } catch (error) {
@@ -171,7 +287,10 @@ const ViewBook = async (req, res, next) => {
 
 
 module.exports = {
+    AllBooks,
+    SearchBook,
     SentRequest,
-    pendingRequests,
+    PendingRequests,
+    ApprovedRequests,
     ViewBook
 }
