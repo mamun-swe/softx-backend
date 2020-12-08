@@ -25,7 +25,7 @@ const Register = async (req, res, next) => {
             name: name,
             email: email,
             password: hashPassword,
-            // role: 'librarian'
+            role: 'librarian'
         })
 
         // Save information
