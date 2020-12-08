@@ -59,16 +59,28 @@ const SearchBook = async (req, res, next) => {
         const result = await Books.find(
             {
                 $and: [
-                    { "bookName": { $regex: ".*" + query + ".*" } },
+                    { "bookName": new RegExp(query, 'i') },
                     { status: 'activate' }
                 ]
-            }
+            },
+            { bookName: 1, bookImage: 1 }
         ).exec()
 
-        res.status(200).json(result)
+        // Modifiy image path url with public url 
+        const response = {
+            results: result.map(book => {
+                return {
+                    id: book._id,
+                    bookName: book.bookName,
+                    bookImage: url + "uploads/books/" + book.bookImage
+                };
+            })
+        }
+        res.status(200).json(response.results)
 
     } catch (error) {
         if (error) {
+            console.log(error)
             next(error)
         }
     }
