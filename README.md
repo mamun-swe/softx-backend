@@ -20,3 +20,17 @@
 - [GET student/request/:bookId/view ](https://github.com/Mamun-swe/softx-backend/blob/master/api-docs/Student/ViewBook.md)
 
 ---
+
+### Librarian API's
+
+- [GET librarian/dashboard ](https://github.com/Mamun-swe/softx-backend/blob/master/api-docs/Librarian/Dashboard.md)
+- [GET librarian/book/index ](https://github.com/Mamun-swe/softx-backend/blob/master/api-docs/Librarian/BookIndex.md)
+- [POST librarian/book/store ](https://github.com/Mamun-swe/softx-backend/blob/master/api-docs/Librarian/BookStore.md)
+- [GET librarian/book/:id/show ](https://github.com/Mamun-swe/softx-backend/blob/master/api-docs/Librarian/BookShow.md)
+- [PUT librarian/book/:id/update ](https://github.com/Mamun-swe/softx-backend/blob/master/api-docs/Librarian/BookUpdate.md)
+- [DELETE librarian/book/:id/delete ](https://github.com/Mamun-swe/softx-backend/blob/master/api-docs/Librarian/BookDelete.md)
+
+
+- [GET librarian/request/index ](https://github.com/Mamun-swe/softx-backend/blob/master/api-docs/Librarian/RequestsIndex.md)
+- [POST librarian/request/status/update ](https://github.com/Mamun-swe/softx-backend/blob/master/api-docs/Librarian/UpdateRequestStatus.md)
+
